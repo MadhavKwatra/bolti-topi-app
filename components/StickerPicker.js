@@ -1,6 +1,6 @@
-import { Pressable,Modal, StyleSheet, Text, View } from "react-native";
+import { Pressable, Modal, StyleSheet, Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-export default function EmojiPicker({ isVisible, onClose, children }) {
+export default function StickerPicker({ isVisible, onClose, children }) {
   return (
     <Modal animationType="slide" visible={isVisible} transparent={true}>
       <View style={styles.modalContent}>

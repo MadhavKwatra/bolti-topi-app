@@ -1,4 +1,3 @@
-import { View, Image } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedStyle,
@@ -6,11 +5,11 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 
-export default function EmojiSticker({ imageSize, stickerSource }) {
-  console.log("DRAG X Y", translateX, translateY);
+export default function Sticker({ imageSize, stickerSource }) {
   const scaleImage = useSharedValue(imageSize);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
+  const rotation = useSharedValue(0);
   const doubleTap = Gesture.Tap()
     .numberOfTaps(2)
     .onStart(() => {
@@ -20,6 +19,14 @@ export default function EmojiSticker({ imageSize, stickerSource }) {
   const drag = Gesture.Pan().onChange((event) => {
     translateX.value += event.changeX;
     translateY.value += event.changeY;
+  });
+  const rotate = Gesture.Rotation().onChange((event) => {
+    rotation.value = event.rotation;
+    console.log("Rotate Called", rotation.value);
+  });
+  const pinch = Gesture.Pinch().onUpdate((event) => {
+    scaleImage.value = imageSize * event.scale;
+    console.log("Pinch Called", scaleImage.value);
   });
   const containerStyle = useAnimatedStyle(() => {
     return {
@@ -38,18 +45,21 @@ export default function EmojiSticker({ imageSize, stickerSource }) {
     return {
       width: withSpring(scaleImage.value),
       height: withSpring(scaleImage.value),
+      transform: [{ rotate: `${rotation.value}rad` }],
     };
   });
+
+  const gesturesForContainer = Gesture.Race(drag, rotate, pinch, doubleTap);
   return (
-    <GestureDetector gesture={drag}>
+    <GestureDetector gesture={gesturesForContainer}>
       <Animated.View style={[containerStyle, { top: -350 }]}>
-        <GestureDetector gesture={doubleTap}>
-          <Animated.Image
-            source={stickerSource}
-            resizeMode="contain"
-            style={[imageStyle, { width: imageSize, height: imageSize }]}
-          />
-        </GestureDetector>
+        {/* <GestureDetector gesture={Gesture.Race(pinch,doubleTap,rotate)}> */}
+        <Animated.Image
+          source={stickerSource}
+          resizeMode="contain"
+          style={[imageStyle, { width: imageSize, height: imageSize }]}
+        />
+        {/* </GestureDetector> */}
       </Animated.View>
     </GestureDetector>
   );
