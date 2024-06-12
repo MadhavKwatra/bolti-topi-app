@@ -1,4 +1,11 @@
-import { View, Text, Image, Animated, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  Animated,
+  StyleSheet,
+  Pressable,
+} from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { Link, useLocalSearchParams } from "expo-router";
 import { LANGUAGE, getHouseMessages } from "../../constants";
@@ -85,6 +92,13 @@ export default function SortedScreen(whatsThis) {
           <Animated.Text style={{ fontSize: 18, color: "#D9BF8F" }}>
             {typedText}
           </Animated.Text>
+          <Link href="/edit" asChild>
+            <Pressable style={styles.createPhotoButton}>
+              <Text style={styles.createPhotoButtonText}>
+                Create a photo for this
+              </Text>
+            </Pressable>
+          </Link>
         </>
       ) : (
         <View>
@@ -109,5 +123,19 @@ const styles = StyleSheet.create({
     color: "#D9BF8F", // Adjust color as needed (Hogwarts blue)
     textShadowColor: "rgba(0, 0, 0, 0.2)", // Optional: Subtle text shadow
     textShadowOffset: { width: 1, height: 1 }, // Offset for the shadow
+  },
+  createPhotoButton: {
+    backgroundColor: "#38B2AC",
+    borderRadius: 50,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  createPhotoButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#fff", // White text
   },
 });

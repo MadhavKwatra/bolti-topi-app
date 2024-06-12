@@ -153,6 +153,14 @@ export default function Layout() {
           }}
         />
         <Drawer.Screen
+          name="edit/index" // This is the name of the page and must match the url from root
+          options={{
+            drawerLabel: "Edit Photo",
+            title: "editPhoto",
+            headerTitle: "Edit Photo",
+          }}
+        />
+        <Drawer.Screen
           name="feedback/index" // This is the name of the page and must match the url from root
           options={{
             drawerLabel: "Feedback",
