@@ -6,12 +6,14 @@ import {
   StyleSheet,
   Pressable,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Link, useLocalSearchParams } from "expo-router";
 import { LANGUAGE, getHouseMessages } from "../../constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { LanguageContext } from "../../store/language";
 
-export default function SortedScreen(whatsThis) {
+export default function SortedScreen() {
+  const selectedLanguage = useContext(LanguageContext).language;
   const [sortedHouse, setSortedHouse] = useState("");
 
   useEffect(() => {
@@ -27,10 +29,6 @@ export default function SortedScreen(whatsThis) {
     };
 
     fetchHouseNameFromStorage();
-
-    // return () => {
-    //   second
-    // }
   }, []);
   const { house } = useLocalSearchParams();
   useEffect(() => {
@@ -42,10 +40,10 @@ export default function SortedScreen(whatsThis) {
   const [typedText, setTypedText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const houseDetails = sortedHouse
-    ? LANGUAGE.english.housesDetails[sortedHouse]
-    : {};
+    ? LANGUAGE[selectedLanguage].housesDetails[sortedHouse]
+    : null;
   const houseMessagesToShow = sortedHouse
-    ? getHouseMessages("english", sortedHouse)
+    ? getHouseMessages(selectedLanguage, sortedHouse)
     : [];
   console.log("And this is house?", useLocalSearchParams());
 
@@ -76,6 +74,7 @@ export default function SortedScreen(whatsThis) {
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#171726",
+        paddingHorizontal: 10,
       }}
     >
       <View style={styles.welcomeContainer}>
@@ -87,9 +86,16 @@ export default function SortedScreen(whatsThis) {
         <>
           <Image
             source={houseDetails.image}
-            style={{ width: 300, height: 300, marginBottom: 20 }}
+            style={{
+              width: 300,
+              height: 300,
+              marginBottom: 20,
+              resizeMode: "contain",
+            }}
           />
-          <Animated.Text style={{ fontSize: 18, color: "#D9BF8F" }}>
+          <Animated.Text
+            style={{ fontSize: 20, color: "#D9BF8F", fontWeight: "600" }}
+          >
             {typedText}
           </Animated.Text>
           <Link href="/edit" asChild>
@@ -101,11 +107,23 @@ export default function SortedScreen(whatsThis) {
           </Link>
         </>
       ) : (
-        <View>
-          <Text style={{ fontSize: 20 }}>
+        <View style={{ alignItems: "center" }}>
+          <Text style={{ fontSize: 20, color: "#D9BF8F" }}>
             You haven't been sorted to the house , Go to Home to sort yourself.
           </Text>
-          <Link href="/">Home</Link>
+          <Link
+            href="/"
+            style={{
+              marginTop: 10,
+              padding: 20,
+              borderWidth: 2,
+              borderColor: "#D9BF8F",
+              color: "#D9BF8F",
+              fontSize: 15,
+            }}
+          >
+            Home
+          </Link>
         </View>
       )}
     </View>
