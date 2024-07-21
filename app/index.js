@@ -1,24 +1,60 @@
 import { Link } from "expo-router";
-import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Button,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { LANGUAGE } from "../constants";
 import HouseDetails from "../components/HouseDetails";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { LanguageContext } from "../store/language";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function WelcomeScreen() {
-  const [selectedLanguage, setSelectedLanguage] = useState("english"); // Initial language
+  const selectedLanguage = useContext(LanguageContext).language;
   const { housesDetails, title, message } = LANGUAGE[selectedLanguage];
-  const handleLanguageChange = (lang) => {
-    setSelectedLanguage(lang);
-  };
+
+  const [sortedHouse, setSortedHouse] = useState("");
+
+  useEffect(() => {
+    // Retrieve user house from AsyncStorage on component mount
+    const fetchHouseNameFromStorage = async () => {
+      try {
+        const houseName = await AsyncStorage.getItem("houseName");
+        console.log("NAME STORED", houseName);
+        houseName && setSortedHouse(houseName);
+      } catch (error) {
+        console.error("Error retrieving houseName:", error);
+      }
+    };
+
+    fetchHouseNameFromStorage();
+  }, []);
   console.log("lang", selectedLanguage, housesDetails, title, message);
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: "#171726" }}
+      contentContainerStyle={{ justifyContent: "center", alignItems: "center" }}
+    >
       <Text
-        style={{ fontSize: 30, marginBottom: 20, paddingHorizontal: "200px" }}
+        style={[
+          styles.text,
+          {
+            fontSize: 30,
+            marginBottom: 20,
+            fontWeight: "600",
+            fontStyle: "italic",
+          },
+        ]}
       >
         {title}
       </Text>
-      <Text>{message}</Text>
+      <Text style={[styles.text, { fontSize: 20, fontWeight: "600" }]}>
+        {message}
+      </Text>
       <View
         style={{
           flexDirection: "row",
@@ -42,14 +78,19 @@ export default function WelcomeScreen() {
           <HouseDetails key={house} houseData={housesDetails[house]} />
         ))}
       </View>
-      <Link style={styles.button} href="/sorting">
-        <Text style={styles.buttonText}>Sort Yourself ✨</Text>
-      </Link>
-    </View>
+      {!sortedHouse && (
+        <Link style={styles.button} href="/sorting">
+          <Text style={styles.buttonText}>Sort Yourself ✨</Text>
+        </Link>
+      )}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  text: {
+    color: "#D9BF8F",
+  },
   button: {
     backgroundColor: "#6A1B9A", // Deep purple color
     paddingVertical: 15,
