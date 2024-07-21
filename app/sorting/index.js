@@ -50,17 +50,24 @@ export default function SortingScreen() {
           });
       }
       setThinkingMessageIndex(thinkingMessageIndex + 1);
-    }, 500);
+    }, 2000);
 
     return () => clearTimeout(messageTimeout); // Cleanup on unmount
   });
   return (
-    <View>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#171726",
+      }}
+    >
       <Image
         source={sortingHatImage}
         style={{ width: 100, height: 100, marginBottom: 20 }}
       />
-      <Text style={{ fontSize: 30, fontWeight: "bold" }}>
+      <Text style={{ fontSize: 30, fontWeight: "bold", color: "#D9BF8F" }}>
         {thinkingMessageToShow}
       </Text>
     </View>
